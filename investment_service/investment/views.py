@@ -4,7 +4,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from user.models import User as UserModel
-from investment.models import Bank as BankModel, Investment as InvestmentModel
+from investment.models import (
+    Bank as BankModel,
+    Investment as InvestmentModel,
+    InvestmentHistory as InvestmentHistoryModel
+    )
 import pandas as pd
 
 
@@ -12,7 +16,7 @@ import pandas as pd
 class InvetmentView(APIView):
     
     def get(self, request):
-        data = pd.read_csv('investment_service/investment/account_asset_info_set.csv')
+        data = pd.read_csv('investment_service/account_asset_info_set.csv')
         username_data = data["고객이름"]
         username_list = []
         for username in username_data:
@@ -32,6 +36,8 @@ class InvetmentView(APIView):
         account_name_data = data["계좌명"]
         account_num_data = data["계좌번호"]
         isin_data = data["ISIN"]
+        cur_price_data = data["현재가"]
+        order_data = data["보유수량"]
         
         for index, account_num in enumerate(account_num_data):
             user = UserModel.objects.get(username=username_data[index])
@@ -43,8 +49,19 @@ class InvetmentView(APIView):
                 account_name = account_name_data[index],
                 account_num = account_num
                 )
+            InvestmentHistoryModel.objects.get_or_create(
+                user = user,
+                bank = bank,
+                account_name = account_name_data[index],
+                account_num = account_num,
+                isin = isin_data[index],
+                cur_price = cur_price_data[index],
+                order = order_data[index],
+                )
 
-        return Response()
+        return Response({"detail" : "데이터를 성공적으로 저장하였습니다."}, status=status.HTTP_200_OK)
+        
+
 
 
 
