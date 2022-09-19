@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from user.models import User as UserModel
-from investment.models import Bank as BankModel
+from investment.models import Bank as BankModel, Investment as InvestmentModel
 import pandas as pd
 
 
@@ -29,7 +29,20 @@ class InvetmentView(APIView):
         for bankname in bank_list:
             BankModel.objects.get_or_create(name=bankname)
 
+        account_name_data = data["계좌명"]
+        account_num_data = data["계좌번호"]
+        isin_data = data["ISIN"]
+        
+        for index, account_num in enumerate(account_num_data):
+            user = UserModel.objects.get(username=username_data[index])
+            bank = BankModel.objects.get(name=bank_data[index])
 
+            InvestmentModel.objects.get_or_create(
+                user = user,
+                bank = bank,
+                account_name = account_name_data[index],
+                account_num = account_num
+                )
 
         return Response()
 
