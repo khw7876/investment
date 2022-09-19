@@ -1,4 +1,5 @@
 from django.db import models
+from user.models import User as UserModel
 
 # Create your models here.
 class Bank(models.Model):
@@ -8,6 +9,8 @@ class Bank(models.Model):
         return self.name
 
 class Investment(models.Model):
+    user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
+    bank = models.ForeignKey(Bank, on_delete=models.CASCADE)
     account_name = models.CharField("계좌명", max_length=40)
     account_num = models.IntegerField("계좌번호")
     starting_fund = models.IntegerField("투자원금", default=0)

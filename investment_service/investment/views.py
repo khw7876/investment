@@ -29,7 +29,6 @@ class InvetmentView(APIView):
         for bankname in bank_list:
             BankModel.objects.get_or_create(name=bankname)
 
-        
 
 
         return Response()
