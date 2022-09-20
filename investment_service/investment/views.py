@@ -75,7 +75,7 @@ class InvetmentView(APIView):
                 cur_price = cur_price_data[index],
                 order = order_data[index],
                 )
-        
+         
         # 여기부터는 account_asset_basic을 정제하는 데이터 
         account_basic_data = pd.read_csv('investment_service/account_basic_info_set.csv')
         account_num_data = account_basic_data["계좌번호"]
