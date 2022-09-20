@@ -17,7 +17,7 @@ class Investment(models.Model):
     total_asset = models.IntegerField("계좌 총 자산", default=0)
 
     def __str__(self):
-            return self.user, self.account_name
+        return self.user, self.account_name
 
 class InvestmentHistory(models.Model):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
@@ -30,6 +30,19 @@ class InvestmentHistory(models.Model):
     cur_price = models.IntegerField("현재가")
     order = models.IntegerField("보유수량")
 
+    def __str__(self):
+        return self.account_name, self.cur_price, self.order
+
+class AssetGroup(models.Model):
+    name = models.CharField("자산그룹명", max_length=30)
 
     def __str__(self):
-            return self.account_name, self.cur_price, self.order
+        return self.name
+
+class Stock(models.Model):
+    name = models.CharField("자산그룹명", max_length=30)
+    current_price = models.IntegerField("현재가")
+    isin = models.CharField("ISIN", max_length=40)
+
+    def __str__(self):
+        return self.name
