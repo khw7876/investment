@@ -8,7 +8,9 @@ from user.models import User as UserModel
 from investment.models import (
     Bank as BankModel,
     Investment as InvestmentModel,
-    InvestmentHistory as InvestmentHistoryModel
+    InvestmentHistory as InvestmentHistoryModel,
+    AssetGroup as AssetGroupModel,
+    Stock as StockModel
     )
 
 
@@ -16,9 +18,22 @@ from investment.models import (
 class InvetmentView(APIView):
     
     def get(self, request):
-        account_asset_data = pd.read_csv('investment_service/account_asset_info_set.csv')
+
+         # 여기부터는 asset_group_info_set을 정제하는 데이터
+        asset_group_data = pd.read_csv('investment_service/asset_group_info_set.csv')
+        name_data = asset_group_data["종목명"]
+        isin_data = asset_group_data["ISIN"]
+        asset_group_name_data = asset_group_data["자산그룹"]
+        
+        for asset_group_name in asset_group_name_data:
+            AssetGroupModel.objects.get_or_create(name = asset_group_name)
+        
+        for index, name in enumerate(name_data):
+            StockModel.objects.get_or_create(name = name, isin = isin_data[index])
 
         # 여기는 accoutn_accet_info_set.csv 파일을 정제하는 데이터
+        account_asset_data = pd.read_csv('investment_service/account_asset_info_set.csv')
+
         username_data = account_asset_data["고객이름"]
         username_list = []
         for username in username_data:
@@ -44,7 +59,7 @@ class InvetmentView(APIView):
         for index, account_num in enumerate(account_num_data):
             user = UserModel.objects.get(username=username_data[index])
             bank = BankModel.objects.get(name=bank_data[index])
-
+            isin = StockModel.objects.get(isin=isin_data[index])
             InvestmentModel.objects.get_or_create(
                 user = user,
                 bank = bank,
@@ -56,7 +71,7 @@ class InvetmentView(APIView):
                 bank = bank,
                 account_name = account_name_data[index],
                 account_num = account_num,
-                isin = isin_data[index],
+                isin = isin,
                 cur_price = cur_price_data[index],
                 order = order_data[index],
                 )
@@ -70,7 +85,8 @@ class InvetmentView(APIView):
             investment_obj = InvestmentModel.objects.get(account_num = account_num_data[index])
             investment_obj.starting_fund = starting_fund_data[index]
             investment_obj.save()
-
+            
+       
 
         return Response({"detail" : "데이터를 성공적으로 저장하였습니다."}, status=status.HTTP_200_OK)
         
