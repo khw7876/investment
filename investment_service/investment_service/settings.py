@@ -45,9 +45,15 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     'rest_framework_simplejwt',
+    'django_apscheduler',
     'user',
     "investment"
 ]
+
+
+APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
+
+SCHEDULER_DEFAULT = True
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [ # 기본적인 view 접근 권한 지정
