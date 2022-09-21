@@ -19,7 +19,6 @@ from investment.models import (
 # Create your views here.
 
 def make_data():
-
     # 여기부터는 asset_group_info_set을 정제하는 데이터
     asset_group_data = pd.read_csv('investment_service/asset_group_info_set.csv')
     name_data = asset_group_data["종목명"]
